@@ -1,13 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
+const saltRounds=10;
 
-const UserSchema = new Schema(
+const UserSchema = new mongoose.Schema(
 {
-  _id:
-  {
-    type: mongoose.Types.ObjectId
-  },
   profile:
   {
     username:
@@ -45,26 +42,40 @@ const UserSchema = new Schema(
     email:
     {
         type: String,
-        unique: true
-    },
-    
+        unique: true,
+        required:true
+    }
+  },
+  createdOn:
+  {
+    type: Date
+  },
+  updatedOn:
+  {
+    type: Date
   }
 });
 
-bcrypt.genSalt(saltRounds, (err, salt) => 
-{
-    if (err)
+UserSchema.pre('save',async function(){
+    const salt = await bcrypt.genSalt(saltRounds, (err, salt) => 
     {
-        return;
-    }
-});
-
-bcrypt.hash(password, salt, (err, hash)=>
-{
-    if(err)
+        if (err)
+        {
+            console.log("Could not generate salt");
+            return;
+        }
+    })
+    const hash = await bcrypt.hash(this.password, salt, (err, hash)=>
     {
-        return;
-    }
+        if(err)
+        {
+            console.log("Could not hash password");
+            return;
+        }
+    })
+    this.password = hash;
 })
 
-module.exports = new mongoose ("User", UserSchema);
+
+
+module.exports = new mongoose.model("User", UserSchema);
