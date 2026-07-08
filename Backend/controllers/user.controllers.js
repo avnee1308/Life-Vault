@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
 const UserModel = require('../models/user');
+const bcrypt = require('bcrypt');
+const user = require('../models/user');
 
-module.exports.SignUp = (req, res, next)=>
+module.exports.SignUp = async (req, res, next)=>
 {
     const {username, password, first, last, email, profileImage} = req.body;
 
@@ -14,10 +16,101 @@ module.exports.SignUp = (req, res, next)=>
             }
         )
     }
+
+    const CheckEmail = await UserModel.findOne({email});
+    const CheckUsername = await UserModel.findOne({username});
+
+    if(CheckEmail || CheckUsername)
+    {
+        return res.status(409).json(
+            {
+                message: "An account with this email or username already exists"
+            }
+        )
+    }
+
+    try
+    {
+        const User = await UserModel.create(
+            {
+                username,
+                password,
+                first,
+                last: last || "",
+                email,
+                profileImage
+            }
+        )
+        return res.status(201).json(
+            {
+                message: "Signed up successfully!",
+                User:
+                {
+                    profileImage,
+                    username,
+                    first,
+                    last,
+                    email
+                }
+            }
+        )
+    }
+    catch(error)
+    {
+        return res.status(500).json(
+            {
+                message: "Failed to create account.Please try again later."
+            }
+        )
+    }
 }
 
-module.exports.Login = (req, res, next)=>
+module.exports.Login = async (req, res, next)=>
 {
-    const {username, password} = req.body;
+    const {identifier, password} = req.body;
 
+    if(!identifier || !password)
+    {
+        return res.status(400).json(
+            {
+                message: "username or password is missing"
+            }
+        )
+    }
+
+    try {
+        const user = await UserModel.findOne({
+            $or: 
+            [
+                { email: identifier },
+                { username: identifier }
+            ]
+        });
+    
+        if(user)
+        {
+            const Match = await bcrypt.compare(password, user.password);
+    
+            if(Match)
+            {
+                return res.status(200).json(
+                    {
+                        message: "Logged in succesfully"
+                    }
+                )
+            }
+            return res.status(401).json(
+                {
+                    message: "Invalid credentials"
+                }
+            )
+        }
+    } catch (error) 
+    {
+        return res.status(500).json(
+        {
+            error
+        }
+        )
+    }
 }

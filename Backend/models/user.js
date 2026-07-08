@@ -46,14 +46,11 @@ const UserSchema = new mongoose.Schema(
         required:true
     }
   },
-  createdOn:
-  {
-    type: Date
-  },
-  updatedOn:
-  {
-    type: Date
-  }
+ timestamps: 
+ {
+    createdOn: 'created_at', 
+    updatedOn: 'updated_at'
+ }
 });
 
 UserSchema.pre('save',async function(){
