@@ -93,9 +93,16 @@ module.exports.Login = async (req, res, next)=>
     
             if(Match)
             {
+                const JWTtoken = createToken(
+                    {
+                        username: user.username,
+                        email : user.email
+                    }
+                )
                 return res.status(200).json(
                     {
-                        message: "Logged in succesfully"
+                        message: "Logged in succesfully",
+                        token
                     }
                 )
             }
