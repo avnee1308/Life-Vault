@@ -76,3 +76,46 @@ UserSchema.pre('save',async function(){
 
 
 module.exports = mongoose.model("User", UserSchema);
+
+//create a household or profiles field, which stores all the possible family memebers who could be the owners of the assets
+// User
+
+// ↓
+
+// Family Members
+
+// ↓
+
+// Alice
+// Bob
+// Charlie
+
+
+// OR -----------------------------------
+
+// User
+
+// ↓
+
+// Profiles
+
+// ↓
+
+// Self
+// Child 1
+// Child 2
+// Father
+
+// -------------------------------------------------------------------------
+
+// Adding household ownership means you'll suddenly need to design:
+
+// invitations
+// accepting invitations
+// family roles
+// permissions
+// shared assets
+// removing members
+// transferring ownership
+// inheritance of access
+// conflict resolution
