@@ -3,6 +3,7 @@ const path = require('path');
 const UserModel = require('../models/user');
 const bcrypt = require('bcrypt');
 const user = require('../models/user');
+const {createToken} = require('../auth/jwt')
 
 module.exports.SignUp = async (req, res, next)=>
 {
@@ -17,8 +18,8 @@ module.exports.SignUp = async (req, res, next)=>
         )
     }
 
-    const CheckEmail = await UserModel.findOne({email});
-    const CheckUsername = await UserModel.findOne({username});
+    const CheckEmail = await UserModel.findOne({ "contact.email": email });
+    const CheckUsername = await UserModel.findOne({ "profile.username": username });
 
     if(CheckEmail || CheckUsername)
     {
@@ -33,24 +34,36 @@ module.exports.SignUp = async (req, res, next)=>
     {
         const User = await UserModel.create(
             {
-                username,
+                profile:
+                {
+                    username,
+                    name:
+                    {
+                        first,
+                        last: last || ""
+                    },
+                    profileImage: profileImage || undefined
+                },
+
                 password,
-                first,
-                last: last || "",
-                email,
-                profileImage
+
+                contact:
+                {
+                    email
+                }
             }
-        )
+        );
+
         return res.status(201).json(
             {
                 message: "Signed up successfully!",
                 User:
                 {
-                    profileImage,
-                    username,
-                    first,
-                    last,
-                    email
+                    profileImage: User.profile.profileImage,
+                    username: User.profile.username,
+                    first: User.profile.name.first,
+                    last: User.profile.name.last,
+                    email: User.contact.email
                 }
             }
         )
@@ -59,7 +72,8 @@ module.exports.SignUp = async (req, res, next)=>
     {
         return res.status(500).json(
             {
-                message: "Failed to create account.Please try again later."
+                message: error.message,
+                error
             }
         )
     }
@@ -80,42 +94,52 @@ module.exports.Login = async (req, res, next)=>
 
     try {
         const user = await UserModel.findOne({
-            $or: 
+            $or:
             [
-                { email: identifier },
-                { username: identifier }
+                { "contact.email": identifier },
+                { "profile.username": identifier }
             ]
         });
-    
+
         if(user)
         {
             const Match = await bcrypt.compare(password, user.password);
-    
+
             if(Match)
             {
                 const JWTtoken = createToken(
                     {
-                        username: user.username,
-                        email : user.email
+                        username: user.profile.username,
+                        email : user.contact.email
                     }
                 )
+
                 return res.status(200).json(
                     {
                         message: "Logged in succesfully",
-                        token
+                        token: JWTtoken
                     }
                 )
             }
+
             return res.status(401).json(
                 {
                     message: "Invalid credentials"
                 }
             )
         }
-    } catch (error) 
+
+        return res.status(401).json(
+            {
+                message: "Invalid credentials"
+            }
+        );
+
+    } catch (error)
     {
         return res.status(500).json(
         {
+            message: error.message,
             error
         }
         )

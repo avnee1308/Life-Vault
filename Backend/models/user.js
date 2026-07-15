@@ -45,34 +45,37 @@ const UserSchema = new mongoose.Schema(
         unique: true,
         required:true
     }
-  },
- timestamps: 
- {
-    createdOn: 'created_at', 
-    updatedOn: 'updated_at'
- }
+  }
 });
 
-UserSchema.pre('save',async function(){
-    const salt = await bcrypt.genSalt(saltRounds, (err, salt) => 
-    {
-        if (err)
-        {
-            console.log("Could not generate salt");
-            return;
-        }
-    })
-    const hash = await bcrypt.hash(this.password, salt, (err, hash)=>
-    {
-        if(err)
-        {
-            console.log("Could not hash password");
-            return;
-        }
-    })
-    this.password = hash;
-})
+// UserSchema.pre('save',async function(){
+//     const salt = await bcrypt.genSalt(saltRounds, (err, salt) => 
+//     {
+//         if (err)
+//         {
+//             console.log("Could not generate salt");
+//             return;
+//         }
+//     })
+//     const hash = await bcrypt.hash(this.password, salt, (err, hash)=>
+//     {
+//         if(err)
+//         {
+//             console.log("Could not hash password");
+//             return;
+//         }
+//     })
+//     this.password = hash;
+// })
 
+UserSchema.pre('save', async function () {
+    if (!this.isModified('password')) {
+        return;
+    }
+
+    const salt = await bcrypt.genSalt(saltRounds);
+    this.password = await bcrypt.hash(this.password, salt);
+});
 
 
 module.exports = mongoose.model("User", UserSchema);
