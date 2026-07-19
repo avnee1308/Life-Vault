@@ -23,7 +23,40 @@ const AssetSchema = new mongoose.Schema(
             },
             assetCategory:
             {
-                type: String
+                type: String,
+                enum:
+            [
+                "Electronics",
+                "Computers",
+                "Mobile Devices",
+                "Home Appliances",
+                "Furniture",
+                "Kitchen Appliances",
+                "Kitchenware",
+                "Vehicles",
+                "Clothing",
+                "Footwear",
+                "Jewellery",
+                "Watches",
+                "Books",
+                "Documents",
+                "Tools",
+                "Sports Equipment",
+                "Musical Instruments",
+                "Gaming",
+                "Photography",
+                "Medical Equipment",
+                "Health & Fitness",
+                "Baby Products",
+                "Office Equipment",
+                "Garden Equipment",
+                "Travel Gear",
+                "Collectibles",
+                "Home Decor",
+                "Subscriptions",
+                "Insurance Policies",
+                "Other"
+            ]
                 //change to enum 
                 // once i have a set list of categories
             },
