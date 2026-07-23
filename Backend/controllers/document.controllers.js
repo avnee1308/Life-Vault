@@ -1,4 +1,6 @@
 const path = require("path");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 const DocumentModel = require("../models/document");
 
 module.exports.createDoc = async (req, res) =>
@@ -71,13 +73,10 @@ module.exports.createDoc = async (req, res) =>
 
 
 
-// module.exports.uploadDoc = async (req, res) =>
-// {
-//     return res.status(501).json(
-//     {
-//         message: "Upload functionality not implemented yet."
-//     });
-// };
+module.exports.uploadDoc = async (req, res) =>
+{
+    
+};
 
 
 
