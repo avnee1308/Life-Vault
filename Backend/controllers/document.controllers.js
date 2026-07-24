@@ -7,62 +7,112 @@ module.exports.createDoc = async (req, res) =>
 {
     try
     {
+        if (!req.file)
+        {
+            return res.status(400).json(
+            {
+                message: "Please upload a document."
+            });
+        }
+
+        const
+        {
+            title,
+            description,
+            category,
+
+            extractedText,
+            language,
+            keywords,
+
+            status,
+            source,
+            verifiedAt,
+
+            present,
+            valid,
+            issuer,
+            signingTime,
+
+            issuedAt,
+            expiresAt,
+
+            isEncrypted,
+            isPasswordProtected
+        } = req.body;
+
+        if (!title || !category)
+        {
+            return res.status(400).json(
+            {
+                message: "Title and category are required."
+            });
+        }
+
         const document = await DocumentModel.create(
         {
             owner: req.user._id,
+
             basic:
             {
-                title: req.body.title,
-                description: req.body.description,
-                category: req.body.category
+                title,
+                description,
+                category
             },
+
             file:
             {
-                originalName: req.body.originalName,
-                filename: req.body.filename,
-                mimeType: req.body.mimeType,
-                extension: req.body.extension,
-                size: req.body.size
+                originalName: req.file.originalname,
+                filename: req.file.filename,
+                mimeType: req.file.mimetype,
+                extension: path.extname(req.file.originalname),
+                size: req.file.size
             },
+
             ocr:
             {
-                extractedText: req.body.extractedText || "",
-                language: req.body.language || "",
-                keywords: req.body.keywords || []
+                extractedText: extractedText || "",
+                language: language || "",
+                keywords: keywords || []
             },
+
             verification:
             {
-                status: req.body.status || "Unverified",
-                source: req.body.source || "Upload",
-                verifiedAt: req.body.verifiedAt
+                status: status || "Unverified",
+                source: source || "Upload",
+                verifiedAt
             },
+
             digitalSignature:
             {
-                present: req.body.present || false,
-                valid: req.body.valid || false,
-                issuer: req.body.issuer || "",
-                signingTime: req.body.signingTime
+                present: present || false,
+                valid: valid || false,
+                issuer: issuer || "",
+                signingTime
             },
+
             dates:
             {
-                issuedAt: req.body.issuedAt,
-                expiresAt: req.body.expiresAt
+                issuedAt,
+                expiresAt
             },
+
             security:
             {
-                isEncrypted: req.body.isEncrypted || false,
-                isPasswordProtected: req.body.isPasswordProtected || false,
+                isEncrypted: isEncrypted || false,
+                isPasswordProtected: isPasswordProtected || false,
                 isArchived: false,
                 isDeleted: false
             }
         });
+
         return res.status(201).json(
         {
             message: "Document created successfully.",
             document
         });
     }
-    catch(err)
+    catch (err)
     {
         return res.status(500).json(
         {
@@ -70,15 +120,6 @@ module.exports.createDoc = async (req, res) =>
         });
     }
 };
-
-
-
-module.exports.uploadDoc = async (req, res) =>
-{
-    
-};
-
-
 
 module.exports.viewDocs = async (req, res) =>
 {
