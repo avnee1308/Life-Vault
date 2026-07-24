@@ -2,6 +2,8 @@ const path = require("path");
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' })
 const DocumentModel = require("../models/document");
+const fs = require("fs");
+const cloudinary = require("../middleware/cloudinary");
 
 module.exports.createDoc = async (req, res) =>
 {
@@ -9,8 +11,7 @@ module.exports.createDoc = async (req, res) =>
     {
         if (!req.file)
         {
-            return res.status(400).json(
-            {
+            return res.status(400).json({
                 message: "Please upload a document."
             });
         }
@@ -43,64 +44,74 @@ module.exports.createDoc = async (req, res) =>
 
         if (!title || !category)
         {
-            return res.status(400).json(
-            {
+            fs.unlinkSync(req.file.path);
+            return res.status(400).json({
                 message: "Title and category are required."
             });
         }
 
+        // Upload to Cloudinary
+        const uploadResult = await cloudinary.uploader.upload(
+            req.file.path,
+            {
+                folder: "life-vault/documents",
+                resource_type: "auto"
+            }
+        );
+
+        // Delete local temporary file
+        fs.unlinkSync(req.file.path);
+
         const document = await DocumentModel.create(
         {
             owner: req.user._id,
-
             basic:
             {
                 title,
                 description,
                 category
             },
-
             file:
             {
                 originalName: req.file.originalname,
-                filename: req.file.filename,
                 mimeType: req.file.mimetype,
                 extension: path.extname(req.file.originalname),
-                size: req.file.size
+                size: req.file.size,
+                storageProvider: "Cloudinary",
+                publicId: uploadResult.public_id,
+                secureUrl: uploadResult.secure_url,
+                resourceType: uploadResult.resource_type
             },
-
             ocr:
             {
                 extractedText: extractedText || "",
                 language: language || "",
-                keywords: keywords || []
+                keywords: keywords
+                    ? keywords.split(",").map(k => k.trim())
+                    : []
             },
-
             verification:
             {
                 status: status || "Unverified",
                 source: source || "Upload",
                 verifiedAt
             },
-
             digitalSignature:
             {
-                present: present || false,
-                valid: valid || false,
+                present: present === "true",
+                valid: valid === "true",
                 issuer: issuer || "",
                 signingTime
             },
-
             dates:
             {
                 issuedAt,
                 expiresAt
             },
-
             security:
             {
-                isEncrypted: isEncrypted || false,
-                isPasswordProtected: isPasswordProtected || false,
+                isEncrypted: isEncrypted === "true",
+                isPasswordProtected: isPasswordProtected === "true",
                 isArchived: false,
                 isDeleted: false
             }
@@ -108,12 +119,19 @@ module.exports.createDoc = async (req, res) =>
 
         return res.status(201).json(
         {
-            message: "Document created successfully.",
+            message: "Document uploaded successfully.",
             document
         });
     }
+
     catch (err)
     {
+        // to remove temporary file if it still exists
+        if (req.file && fs.existsSync(req.file.path))
+        {
+            fs.unlinkSync(req.file.path);
+        }
+
         return res.status(500).json(
         {
             message: err.message

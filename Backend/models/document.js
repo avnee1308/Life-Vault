@@ -56,11 +56,11 @@ const DocumentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        filename:
-        {
-            type: String,
-            required: true
-        },
+        // filename:
+        // {
+        //     type: String,
+        //     required: true
+        // },
         mimeType:
         {
             type: String,
@@ -74,29 +74,26 @@ const DocumentSchema = new mongoose.Schema(
         {
             type: Number,
             required: true
+        },
+        storageProvider:
+        {
+            type: String,
+            default: "Cloudinary"
+        },
+        publicId:
+        {
+            type: String,
+            required: true
+        },
+        secureUrl:
+        {
+            type: String,
+            required: true
+        },
+        resourceType:
+        {
+            type: String
         }
-        // storageProvider:
-        // {
-        //     type: String,
-        //     enum: ["Local", "Cloudinary", "S3"],
-        //     default: "Local"
-        // },
-        // storagePath:
-        // {
-        //     type: String,
-        //     required: true
-        // },
-
-        // thumbnail:
-        // {
-        //     type: String,
-        //     default: ""
-        // },
-
-        // checksum:
-        // {
-        //     type: String
-        // }
     },
     ocr:
     {
