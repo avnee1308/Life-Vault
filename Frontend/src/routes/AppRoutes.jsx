@@ -3,8 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import SignUp from "../pages/SignUp";
 import Dashboard from "../pages/Dashboard";
+import Assets from "../pages/Assets";
+import Documents from "../pages/Documents";
+import Services from "../pages/Services";
 
-import ProtectedRoute from "../routes/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 
 
 function AppRoutes() {
@@ -15,8 +18,7 @@ function AppRoutes() {
 
             <Routes>
 
-
-                {/* Public Routes */}
+                {/* ================= PUBLIC ROUTES ================= */}
 
                 <Route
                     path="/"
@@ -29,7 +31,7 @@ function AppRoutes() {
                 />
 
 
-                {/* Protected Routes */}
+                {/* ================= PROTECTED ROUTES ================= */}
 
                 <Route element={<ProtectedRoute />}>
 
@@ -38,8 +40,22 @@ function AppRoutes() {
                         element={<Dashboard />}
                     />
 
-                </Route>
+                    <Route
+                        path="/assets"
+                        element={<Assets />}
+                    />
 
+                    <Route
+                        path="/documents"
+                        element={<Documents />}
+                    />
+
+                    <Route
+                        path="/services"
+                        element={<Services />}
+                    />
+
+                </Route>
 
             </Routes>
 

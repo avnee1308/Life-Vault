@@ -22,7 +22,7 @@ function ProtectedRoute() {
 
     // User is not logged in
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     // User is authenticated
