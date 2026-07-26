@@ -1,72 +1,147 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+import "./Navbar.css";
 
 
 function Navbar() {
 
-    const navLinkClass = ({ isActive }) =>
-        `px-4 py-2 rounded-lg transition duration-200 ${
-            isActive
-                ? "bg-blue-600 text-white"
-                : "text-slate-700 hover:bg-slate-100"
-        }`;
+    const { user, logout } = useAuth();
+
+    const navigate = useNavigate();
+
+
+    const firstName =
+        user?.profile?.name?.first ||
+        user?.name?.first ||
+        user?.first ||
+        user?.username ||
+        "User";
+
+
+    const handleLogout = () => {
+
+        logout();
+
+        navigate("/login");
+
+    };
 
 
     return (
 
-        <header className="bg-white shadow-md">
+        <header className="navbar">
 
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="navbar-inner">
 
-                <div className="h-16 flex items-center justify-between">
 
-                    {/* Logo */}
+                {/* LOGO */}
+
+                <NavLink
+                    to="/dashboard"
+                    className="navbar-logo"
+                >
+
+                    <span className="navbar-logo-icon">
+                        🔒
+                    </span>
+
+                    <span className="navbar-logo-text">
+                        LifeVault
+                    </span>
+
+                </NavLink>
+
+
+
+                {/* NAVIGATION */}
+
+                <nav className="navbar-links">
 
                     <NavLink
                         to="/dashboard"
-                        className="text-2xl font-bold text-blue-600"
+                        className={({ isActive }) =>
+                            `navbar-link ${isActive ? "active" : ""}`
+                        }
                     >
-                        🔒 LifeVault
+
+                        <span>🏠</span>
+
+                        <span>
+                            Dashboard
+                        </span>
+
                     </NavLink>
 
 
-                    {/* Navigation */}
+                    <NavLink
+                        to="/assets"
+                        className={({ isActive }) =>
+                            `navbar-link ${isActive ? "active" : ""}`
+                        }
+                    >
 
-                    <nav className="flex items-center gap-2">
+                        <span>📦</span>
 
-                        <NavLink
-                            to="/dashboard"
-                            className={navLinkClass}
-                        >
-                            🏠 Dashboard
-                        </NavLink>
+                        <span>
+                            Assets
+                        </span>
 
-
-                        <NavLink
-                            to="/assets"
-                            className={navLinkClass}
-                        >
-                            📦 Assets
-                        </NavLink>
+                    </NavLink>
 
 
-                        <NavLink
-                            to="/documents"
-                            className={navLinkClass}
-                        >
-                            📄 Documents
-                        </NavLink>
+                    <NavLink
+                        to="/documents"
+                        className={({ isActive }) =>
+                            `navbar-link ${isActive ? "active" : ""}`
+                        }
+                    >
+
+                        <span>📄</span>
+
+                        <span>
+                            Documents
+                        </span>
+
+                    </NavLink>
 
 
-                        <NavLink
-                            to="/services"
-                            className={navLinkClass}
-                        >
-                            💳 Services
-                        </NavLink>
+                    <NavLink
+                        to="/services"
+                        className={({ isActive }) =>
+                            `navbar-link ${isActive ? "active" : ""}`
+                        }
+                    >
 
-                    </nav>
+                        <span>💳</span>
+
+                        <span>
+                            Services
+                        </span>
+
+                    </NavLink>
+
+                </nav>
+
+
+
+                {/* RIGHT SIDE */}
+
+                <div className="navbar-right">
+
+                    <span className="navbar-user">
+                        Hi, {firstName}
+                    </span>
+
+                    <button
+                        className="navbar-logout"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
 
                 </div>
+
 
             </div>
 

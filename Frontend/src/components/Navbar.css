@@ -1,0 +1,186 @@
+/* ================================
+   NAVBAR
+================================ */
+
+.navbar {
+    height: 72px;
+
+    background: #111827;
+
+    border-bottom: 1px solid #1f2937;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 32px;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+
+.navbar-inner {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* ================================
+   LOGO
+================================ */
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    letter-spacing: -0.3px;
+}
+
+
+.navbar-logo-icon {
+    font-size: 20px;
+}
+
+
+/* ================================
+   NAV LINKS
+================================ */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+
+.navbar-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 9px 13px;
+
+    border-radius: 8px;
+
+    color: #9ca3af;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.navbar-link:hover {
+    background: #1f2937;
+    color: #ffffff;
+}
+
+
+.navbar-link.active {
+    background: #374151;
+    color: #ffffff;
+}
+
+
+/* ================================
+   RIGHT SIDE
+================================ */
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.navbar-user {
+    color: #d1d5db;
+    font-size: 14px;
+}
+
+
+/* ================================
+   LOGOUT
+================================ */
+
+.navbar-logout {
+    border: 1px solid #374151;
+
+    background: transparent;
+
+    color: #d1d5db;
+
+    padding: 8px 13px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.navbar-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 800px) {
+
+    .navbar {
+        padding: 0 16px;
+    }
+
+    .navbar-links {
+        gap: 2px;
+    }
+
+    .navbar-link span {
+        display: none;
+    }
+
+    .navbar-user {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .navbar-logo-text {
+        display: none;
+    }
+
+}

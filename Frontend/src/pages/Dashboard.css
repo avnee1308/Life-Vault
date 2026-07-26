@@ -1,0 +1,269 @@
+/* ================================
+   DASHBOARD
+================================ */
+
+.dashboard-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+
+/* ================================
+   MAIN CONTENT
+================================ */
+
+.dashboard-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 32px 64px;
+}
+
+
+/* ================================
+   WELCOME SECTION
+================================ */
+
+.dashboard-welcome {
+    margin-bottom: 36px;
+}
+
+.dashboard-welcome h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    color: #111827;
+}
+
+.dashboard-welcome p {
+    margin: 10px 0 0;
+    color: #667085;
+    font-size: 16px;
+}
+
+
+/* ================================
+   STATISTICS
+================================ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-bottom: 42px;
+}
+
+
+/* ================================
+   STAT CARD
+================================ */
+
+.stat-card {
+    display: block;
+    background: #ffffff;
+    border: 1px solid #e7eaf0;
+    border-radius: 16px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    border-color: #d7dce5;
+}
+
+
+.stat-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    font-size: 22px;
+    background: #eef2ff;
+}
+
+
+.stat-card-label {
+    margin: 18px 0 0;
+
+    color: #667085;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+.stat-card-number {
+    margin: 4px 0 0;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+
+.stat-card-link {
+    display: inline-block;
+
+    margin-top: 18px;
+
+    color: #4f46e5;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* ================================
+   QUICK ACTIONS
+================================ */
+
+.quick-actions {
+    margin-top: 10px;
+}
+
+.quick-actions-header {
+    margin-bottom: 18px;
+}
+
+.quick-actions-header h2 {
+    margin: 0;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+.quick-actions-header p {
+    margin: 5px 0 0;
+
+    color: #667085;
+    font-size: 14px;
+}
+
+
+/* ================================
+   ACTION GRID
+================================ */
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+
+/* ================================
+   ACTION CARD
+================================ */
+
+.action-card {
+    position: relative;
+
+    display: block;
+
+    padding: 26px;
+
+    border-radius: 16px;
+
+    text-decoration: none;
+    color: white;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.15);
+}
+
+
+.action-card-blue {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+}
+
+.action-card-dark {
+    background: linear-gradient(135deg, #1e293b, #334155);
+}
+
+.action-card-green {
+    background: linear-gradient(135deg, #059669, #10b981);
+}
+
+
+.action-card-icon {
+    font-size: 28px;
+    margin-bottom: 18px;
+}
+
+
+.action-card h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.action-card p {
+    margin: 7px 0 0;
+
+    color: rgba(255, 255, 255, 0.8);
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+
+    .stats-grid,
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dashboard-main {
+        padding: 32px 18px 48px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 28px;
+    }
+
+}
