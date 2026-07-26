@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const PORT = 4444;
@@ -11,6 +12,13 @@ const { mongoose } = require('mongoose');
 
 dotenv.config();
 
+app.use(
+    cors({
+        origin: "http://localhost:5173"
+    })
+);
+
+app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use('/user', UserRoute);
