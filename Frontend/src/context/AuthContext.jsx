@@ -1,4 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState
+} from "react";
 
 const AuthContext = createContext();
 
@@ -8,6 +13,8 @@ export function AuthProvider({ children }) {
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
+
+    // Restore authentication after page refresh
     useEffect(() => {
 
         const storedToken = localStorage.getItem("token");
@@ -18,23 +25,39 @@ export function AuthProvider({ children }) {
         }
 
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch (error) {
+                console.error("Failed to parse stored user:", error);
+
+                localStorage.removeItem("user");
+            }
+
         }
 
         setLoading(false);
 
     }, []);
 
+
+    // Login
     const login = (userData, jwtToken) => {
 
         localStorage.setItem("token", jwtToken);
-        localStorage.setItem("user", JSON.stringify(userData));
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(userData)
+        );
 
         setToken(jwtToken);
         setUser(userData);
 
     };
 
+
+    // Logout
     const logout = () => {
 
         localStorage.removeItem("token");
@@ -45,8 +68,8 @@ export function AuthProvider({ children }) {
 
     };
 
-    return (
 
+    return (
         <AuthContext.Provider
             value={{
                 user,
@@ -54,20 +77,19 @@ export function AuthProvider({ children }) {
                 loading,
                 isAuthenticated: !!token,
                 login,
-                logout,
+                logout
             }}
         >
 
             {children}
 
         </AuthContext.Provider>
-
     );
 
 }
 
-export function useAuth() {
 
+export function useAuth() 
+{
     return useContext(AuthContext);
-
 }

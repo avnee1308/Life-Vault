@@ -1,24 +1,26 @@
 import { useState } from "react";
-import {Link, useNavigate } from "react-router-dom";
-import { FaLock, FaUser, FaArrowRight } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import {
+    FaLock,
+    FaUser,
+    FaEnvelope,
+    FaArrowRight
+} from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
-import { loginUser } from "../api/auth.api";
-import { useAuth } from "../context/AuthContext";
+import { signupUser } from "../api/auth.api";
 
 
-function Login() {
+function SignUp() {
 
     const navigate = useNavigate();
 
-    const { login } = useAuth();
-
-
     const [formData, setFormData] = useState({
-        identifier: "",
+        username: "",
+        first: "",
+        email: "",
         password: ""
     });
-
 
     const [loading, setLoading] = useState(false);
 
@@ -40,12 +42,16 @@ function Login() {
         event.preventDefault();
 
 
-        if (!formData.identifier || !formData.password) {
+        if (
+            !formData.username ||
+            !formData.first ||
+            !formData.email ||
+            !formData.password
+        ) {
 
-            toast.error("Please enter your username/email and password.");
+            toast.error("Please fill in all the fields.");
 
             return;
-
         }
 
 
@@ -53,55 +59,21 @@ function Login() {
 
             setLoading(true);
 
+            await signupUser(formData);
 
-            const data = await loginUser(formData);
+            toast.success("Account created successfully!");
 
-
-            /*
-             * Expected backend response:
-             *
-             * {
-             *     token: "...",
-             *     user: {...}
-             * }
-             *
-             */
-
-
-            const token = data.token;
-            const user = data.user;
-
-
-            if (!token) {
-
-                throw new Error(
-                    "Login successful but no token was received."
-                );
-
-            }
-
-
-            login(user || null, token);
-
-
-            toast.success("Login successful!");
-
-
-            navigate("/dashboard");
-
+            navigate("/login");
 
         } catch (error) {
 
-            console.error("Login error:", error);
-
+            console.error("Signup error:", error);
 
             const message =
                 error.response?.data?.message ||
-                "Login failed. Please check your credentials.";
-
+                "Unable to create account. Please try again.";
 
             toast.error(message);
-
 
         } finally {
 
@@ -119,7 +91,7 @@ function Login() {
             <div className="w-full max-w-md">
 
 
-                {/* Logo / Heading */}
+                {/* Logo */}
 
                 <div className="text-center mb-8">
 
@@ -146,21 +118,20 @@ function Login() {
                 </div>
 
 
-                {/* Login Card */}
+                {/* Signup Card */}
 
                 <div className="bg-white rounded-2xl shadow-xl p-8">
 
-
                     <h2 className="text-2xl font-semibold text-slate-900">
 
-                        Welcome back
+                        Create your account
 
                     </h2>
 
 
                     <p className="text-slate-500 mt-1 mb-6">
 
-                        Sign in to access your LifeVault
+                        Start organizing your digital life with LifeVault.
 
                     </p>
 
@@ -171,15 +142,15 @@ function Login() {
                     >
 
 
-                        {/* Username / Email */}
+                        {/* Username */}
 
                         <div>
 
                             <label
-                                htmlFor="identifier"
+                                htmlFor="username"
                                 className="block text-sm font-medium text-slate-700 mb-2"
                             >
-                                Username or Email
+                                Username
                             </label>
 
 
@@ -192,13 +163,85 @@ function Login() {
 
 
                                 <input
-                                    id="identifier"
-                                    name="identifier"
+                                    id="username"
+                                    name="username"
                                     type="text"
-                                    value={formData.identifier}
+                                    value={formData.username}
                                     onChange={handleChange}
-                                    placeholder="Enter username or email"
+                                    placeholder="Choose a username"
                                     autoComplete="username"
+                                    className="w-full border border-slate-300 rounded-lg pl-10 pr-4 py-3 outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+
+                            </div>
+
+                        </div>
+
+
+                        {/* First Name */}
+
+                        <div>
+
+                            <label
+                                htmlFor="first"
+                                className="block text-sm font-medium text-slate-700 mb-2"
+                            >
+                                First Name
+                            </label>
+
+
+                            <div className="relative">
+
+                                <FaUser
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    size={14}
+                                />
+
+
+                                <input
+                                    id="first"
+                                    name="first"
+                                    type="text"
+                                    value={formData.first}
+                                    onChange={handleChange}
+                                    placeholder="Enter your first name"
+                                    autoComplete="given-name"
+                                    className="w-full border border-slate-300 rounded-lg pl-10 pr-4 py-3 outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+
+                            </div>
+
+                        </div>
+
+
+                        {/* Email */}
+
+                        <div>
+
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-slate-700 mb-2"
+                            >
+                                Email
+                            </label>
+
+
+                            <div className="relative">
+
+                                <FaEnvelope
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    size={14}
+                                />
+
+
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter your email"
+                                    autoComplete="email"
                                     className="w-full border border-slate-300 rounded-lg pl-10 pr-4 py-3 outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
 
@@ -233,8 +276,8 @@ function Login() {
                                     type="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    placeholder="Enter password"
-                                    autoComplete="current-password"
+                                    placeholder="Create a password"
+                                    autoComplete="new-password"
                                     className="w-full border border-slate-300 rounded-lg pl-10 pr-4 py-3 outline-none transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
 
@@ -243,7 +286,7 @@ function Login() {
                         </div>
 
 
-                        {/* Login Button */}
+                        {/* Signup Button */}
 
                         <button
                             type="submit"
@@ -256,13 +299,13 @@ function Login() {
                                 <>
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 
-                                    Signing in...
+                                    Creating account...
                                 </>
 
                             ) : (
 
                                 <>
-                                    Sign In
+                                    Create Account
 
                                     <FaArrowRight size={14} />
 
@@ -274,6 +317,26 @@ function Login() {
 
                     </form>
 
+
+                    {/* Login Link */}
+
+                    <div className="text-center mt-6">
+
+                        <p className="text-sm text-slate-500">
+
+                            Already have an account?{" "}
+
+                            <Link
+                                to="/login"
+                                className="text-blue-600 font-medium hover:text-blue-700"
+                            >
+                                Sign in
+                            </Link>
+
+                        </p>
+
+                    </div>
+
                 </div>
 
 
@@ -283,25 +346,7 @@ function Login() {
 
                 </p>
 
-
             </div>
-            
-            <div className="text-center mt-6">
-
-            <p className="text-sm text-slate-500">
-
-                Don't have an account?{" "}
-
-                <Link
-                    to="/"
-                    className="text-blue-600 font-medium hover:text-blue-700"
-                >
-                    Create one
-                </Link>
-
-            </p>
-
-        </div>
 
         </div>
 
@@ -310,4 +355,4 @@ function Login() {
 }
 
 
-export default Login;
+export default SignUp;

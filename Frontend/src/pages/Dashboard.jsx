@@ -1,6 +1,6 @@
-import DashboardLayout from "../layouts/DashboardLayout";
-import Sidebar from "../components/layout/Sidebar";
-import Navbar from "../components/layout/Navbar";
+import DashboardLayout from "../layout/DashboardLayout";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
 
