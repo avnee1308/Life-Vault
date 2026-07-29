@@ -31,6 +31,8 @@ function AppRoutes() {
                 />
 
 
+
+
                 {/* ================= PROTECTED ROUTES ================= */}
 
                 <Route element={<ProtectedRoute />}>
@@ -42,7 +44,11 @@ function AppRoutes() {
 
                     <Route
                         path="/assets"
-                        element={<Assets />}
+                        element={
+                            // <ProtectedRoute>
+                                <Assets />
+                            // </ProtectedRoute>
+                        }
                     />
 
                     <Route
