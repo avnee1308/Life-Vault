@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const Service = require("../models/service.model");
+const Service = require("../models/service");
 
 module.exports.createService = async (req, res) => 
 {

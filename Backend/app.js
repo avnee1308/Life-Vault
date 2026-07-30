@@ -8,6 +8,7 @@ const app = express();
 const UserRoute = require('./routes/user.routes');
 const AssetRoute = require('./routes/asset.routes');
 const DocumentRoute = require('./routes/document.routes');
+const ServiceRoute = require('./routes/service.routes');
 const { mongoose } = require('mongoose');
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({extended:true}));
 app.use('/user', UserRoute);
 app.use('/asset', AssetRoute);
 app.use('/document', DocumentRoute);
+app.use("/service", ServiceRoute);
 
 mongoose.connect('mongodb://localhost:27017/LifeVault')
     .then(() => 

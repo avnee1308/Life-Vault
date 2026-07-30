@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const verifyTokenAndAuthenticateUser = require("../middlewares/auth.middleware");
+const {verifyTokenAndAuthenticateUser} = require('../auth/jwt')
 
 const {
     createService,
@@ -17,8 +17,7 @@ const {
 } = require("../controllers/service.controller");
 
 
-
-router.post("/create",verifyTokenAndAuthenticateUser,createService);
+router.post("/create",verifyTokenAndAuthenticateUser, createService);
 
 router.get("/all",verifyTokenAndAuthenticateUser,getAllServices);
 

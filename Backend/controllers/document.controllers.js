@@ -1,6 +1,6 @@
 const path = require("path");
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+// const multer  = require('multer')
+// const upload = multer({ dest: 'uploads/' })
 const DocumentModel = require("../models/document");
 const fs = require("fs");
 const cloudinary = require("../middleware/cloudinary");
