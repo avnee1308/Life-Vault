@@ -59,35 +59,122 @@ module.exports.createAsset = async (req, res, next)=>
     }
 }
 
-module.exports.getAssets = async (req, res, next)=>
+module.exports.getAssets = async (req, res, next) => 
 {
-    try
+    try 
     {
-        const allAssets = await AssetModel.find({owner: req.user._id});
-        if(allAssets.length===0)
+
+        const {search, category, brand, location, sort} = req.query;
+
+        const filter = 
         {
-            return res.status(200).json(
-                {
-                    message:"No assets :(",
-                    allAssets
-                }
-            )
+            owner: req.user._id
+        };
+
+        // Category Filter
+        if (category) 
+        {
+            filter["basic.assetCategory"] = category;
         }
+
+        // Brand Filter
+        if (brand) 
+        {
+            filter["specifications.brand"] = brand;
+        }
+
+        // Location Filter
+        if (location) 
+        {
+            filter["specifications.location"] = location;
+        }
+
+        // Search
+        if (search) 
+        {
+            filter.$or =
+            [
+                {
+                    "basic.assetName": 
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "specifications.brand": 
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "specifications.model": 
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "specifications.description": 
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        // Sorting
+        let sortOption = {};
+
+        switch (sort) {
+            case "latest":
+                sortOption = { createdAt: -1 };
+                break;
+
+            case "oldest":
+                sortOption = { createdAt: 1 };
+                break;
+
+            case "name":
+                sortOption = { "basic.assetName": 1 };
+                break;
+
+            case "priceLow":
+                sortOption = { "basic.purchasePrice": 1 };
+                break;
+
+            case "priceHigh":
+                sortOption = { "basic.purchasePrice": -1 };
+                break;
+
+            default:
+                sortOption = { createdAt: -1 };
+        }
+
+        const allAssets = await AssetModel
+            .find(filter)
+            .sort(sortOption);
+
         return res.status(200).json(
-            {
-                allAssets
-            }
-        )
-    } catch (error) 
+        {
+            count: allAssets.length,
+            allAssets
+        });
+
+    } 
+    
+    catch (error) 
     {
+
         return res.status(500).json(
-            {
-                message: error.message,
-                error
-            }
-        )
+        {
+            message: error.message
+        });
+
     }
-}
+};
 
 module.exports.updateAsset = async (req,res,next)=>
 {
