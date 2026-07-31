@@ -139,27 +139,129 @@ module.exports.createDoc = async (req, res) =>
     }
 };
 
-module.exports.viewDocs = async (req, res) =>
-{
-    try
-    {
-        const documents = await DocumentModel.find(
-        {
+module.exports.viewDocs = async (req, res) => {
+    try {
+
+        const {
+            search,
+            category,
+            extension,
+            mimeType,
+            status,
+            sort
+        } = req.query;
+
+        const filter = {
             owner: req.user._id,
             "security.isDeleted": false
+        };
+
+        // Category Filter
+        if (category) {
+            filter["basic.category"] = category;
+        }
+
+        // File Extension Filter
+        if (extension) {
+            filter["file.extension"] = extension;
+        }
+
+        // MIME Type Filter
+        if (mimeType) {
+            filter["file.mimeType"] = mimeType;
+        }
+
+        // Verification Status Filter
+        if (status) {
+            filter["verification.status"] = status;
+        }
+
+        // Search
+        if (search) {
+            filter.$or = [
+                {
+                    "basic.title": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "basic.description": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "file.originalName": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "ocr.extractedText": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    "ocr.keywords": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        // Sorting
+        let sortOption = {};
+
+        switch (sort) {
+
+            case "latest":
+                sortOption = { createdAt: -1 };
+                break;
+
+            case "oldest":
+                sortOption = { createdAt: 1 };
+                break;
+
+            case "title":
+                sortOption = { "basic.title": 1 };
+                break;
+
+            case "sizeLow":
+                sortOption = { "file.size": 1 };
+                break;
+
+            case "sizeHigh":
+                sortOption = { "file.size": -1 };
+                break;
+
+            case "expiry":
+                sortOption = { "dates.expiresAt": 1 };
+                break;
+
+            default:
+                sortOption = { createdAt: -1 };
+        }
+
+        const documents = await DocumentModel
+            .find(filter)
+            .sort(sortOption);
+
+        return res.status(200).json({
+            count: documents.length,
+            documents
         });
-        return res.status(200).json(documents);
-    }
-    catch(err)
-    {
-        return res.status(500).json(
-        {
+
+    } catch (err) {
+
+        return res.status(500).json({
             message: err.message
         });
+
     }
 };
-
-
 
 module.exports.getDoc = async (req, res) =>
 {
@@ -189,8 +291,6 @@ module.exports.getDoc = async (req, res) =>
         });
     }
 };
-
-
 
 module.exports.updateDoc = async (req, res) =>
 {
@@ -227,8 +327,6 @@ module.exports.updateDoc = async (req, res) =>
         });
     }
 };
-
-
 
 module.exports.deleteDoc = async (req, res) =>
 {
@@ -267,25 +365,23 @@ module.exports.deleteDoc = async (req, res) =>
     }
 };
 
-
-
-module.exports.getDocCategory = async (req, res) =>
-{
-    try
-    {
-        const documents = await DocumentModel.find(
-        {
-            owner: req.user._id,
-            "basic.category": req.params.category,
-            "security.isDeleted": false
-        });
-        return res.status(200).json(documents);
-    }
-    catch(err)
-    {
-        return res.status(500).json(
-        {
-            message: err.message
-        });
-    }
-};
+// module.exports.getDocCategory = async (req, res) =>
+// {
+//     try
+//     {
+//         const documents = await DocumentModel.find(
+//         {
+//             owner: req.user._id,
+//             "basic.category": req.params.category,
+//             "security.isDeleted": false
+//         });
+//         return res.status(200).json(documents);
+//     }
+//     catch(err)
+//     {
+//         return res.status(500).json(
+//         {
+//             message: err.message
+//         });
+//     }
+// };
