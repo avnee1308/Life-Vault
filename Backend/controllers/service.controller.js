@@ -26,17 +26,137 @@ module.exports.createService = async (req, res) =>
     }
 };
 
-module.exports.getAllServices = async (req, res) => 
+module.exports.getAllServices = async (req, res) =>
 {
-    try 
+    try
     {
-        const services = await Service.find(
+        const
+        {
+            search,
+            category,
+            provider,
+            status,
+            billingCycle,
+            autoPay,
+            sort
+        } = req.query;
+
+        const filter =
         {
             owner: req.user._id
-        }).sort({ dueDate: 1 });
-        return res.status(200).json(services);
-    } 
-    catch (err) 
+        };
+
+        // Category Filter
+        if(category)
+        {
+            filter.category = category;
+        }
+
+        // Provider Filter
+        if(provider)
+        {
+            filter.provider = provider;
+        }
+
+        // Status Filter
+        if(status)
+        {
+            filter.status = status;
+        }
+
+        // Billing Cycle Filter
+        if(billingCycle)
+        {
+            filter.billingCycle = billingCycle;
+        }
+
+        // Auto Pay Filter
+        if(autoPay !== undefined)
+        {
+            filter.autoPay = autoPay === "true";
+        }
+
+        // Search
+        if(search)
+        {
+            filter.$or =
+            [
+                {
+                    name:
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    provider:
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    notes:
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    accountNumber:
+                    {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        // Sorting
+        let sortOption = {};
+
+        switch(sort)
+        {
+            case "latest":
+                sortOption = { createdAt: -1 };
+                break;
+
+            case "oldest":
+                sortOption = { createdAt: 1 };
+                break;
+
+            case "name":
+                sortOption = { name: 1 };
+                break;
+
+            case "amountLow":
+                sortOption = { expectedAmount: 1 };
+                break;
+
+            case "amountHigh":
+                sortOption = { expectedAmount: -1 };
+                break;
+
+            case "dueDate":
+                sortOption = { dueDate: 1 };
+                break;
+
+            default:
+                sortOption = { dueDate: 1 };
+        }
+
+        const services = await Service
+            .find(filter)
+            .sort(sortOption);
+
+        return res.status(200).json(
+        {
+            count: services.length,
+            services
+        });
+
+    }
+    catch(err)
     {
         return res.status(500).json(
         {
