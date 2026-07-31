@@ -1,8 +1,10 @@
 import api from "./axios";
 
 // Get all assets
-export const getAssets = async () => {
-    const response = await api.get("/asset/get");
+export const getAssets = async (params = {}) => {
+    const response = await api.get("/asset/get", {
+        params
+    });
     return response.data;
 };
 

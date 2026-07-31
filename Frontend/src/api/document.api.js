@@ -1,9 +1,11 @@
 import api from "./axios";
 
 // Get all documents
-export const getDocuments = async () => {
-const response = await api.get("/document/view");
-return response.data;
+export const getDocuments = async (params = {}) => {
+    const response = await api.get("/document/view", {
+        params
+    });
+    return response.data;
 };
 
 // Get a single document
